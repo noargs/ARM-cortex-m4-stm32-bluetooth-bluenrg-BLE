@@ -1,10 +1,19 @@
+#include <stdio.h>
+
 #include "main.h"
+#include "app_bluenrg.h"
 
 UART_HandleTypeDef huart2;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+
+int __io_putchar(int ch)
+{
+	HAL_UART_Transmit(&huart2, ((uint8_t *)&ch), 1, 10);
+	return ch;
+}
 
 int main(void)
 {
@@ -15,19 +24,21 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
 
+
+  // 1. Enable BLE module
+  bluenrg_init();
+
+  printf("Initialisation successful...\n\r");
+
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+  	// 2. Process BLE
+  	bluenrg_process();
   }
 
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
